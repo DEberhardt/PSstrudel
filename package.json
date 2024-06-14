@@ -1,0 +1,29 @@
+{
+  "name": "PSstrudel",
+  "description": "The solution must reduce administrative overhead.",
+  "homepage": "https://github.com/DEberhardt/PSstrudel",
+  "keywords": [
+    "PowerShell",
+    "Module"
+  ],
+  "author": "David Eberhardt <PSstrudel-Module@outlook.com>",
+  "contributors": [],
+  "dependencies": {
+    "PlatyPs": "^0.14.2",
+    "Microsoft.PowerShell.PSResourceGet": "^1.0.5"
+  },
+  "license": "MIT",
+  "LicenseUri": "https://github.com/DEberhardt/PSstrudel/blob/master/LICENSE",
+  "ProjectUri": "https://github.com/DEberhardt/PSstrudel",
+  "IconUri": "https://github.com/DEberhardt/PSstrudel/blob/master/CHANGELOG.md",
+  "ReleaseNotes": "https://github.com/DEberhardt/PSstrudel/blob/master/CHANGELOG.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEberhardt/PSstrudel/PSstrudel.git"
+  },
+  "main": "PSstrudel.psm1",
+  "version": "0.12.0",
+  "isPreRelease": "false",
+  "PreReleaseTag": "PreRelease",
+  "copyright": "(c) 2024-CurrentYear David Eberhardt. All rights reserved."
+}

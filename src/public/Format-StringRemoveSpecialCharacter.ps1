@@ -1,0 +1,110 @@
+﻿# Module:   PSstrudel
+# Function: Support
+# Author:   Francois-Xavier Cat
+# Updated:  03-MAY-2020
+# Status:   Live
+
+
+
+
+function Format-StringRemoveSpecialCharacter {
+  <#
+  .SYNOPSIS
+    This function will remove the special character from a string.
+  .DESCRIPTION
+    This function will remove the special character from a string.
+    I'm using Unicode Regular Expressions with the following categories
+    \p{L} : any kind of letter from any language.
+    \p{Nd} : a digit zero through nine in any script except ideographic
+    http://www.regular-expressions.info/unicode.html
+    http://unicode.org/reports/tr18/
+  .PARAMETER String
+    Specifies the String on which the special character will be removed
+  .PARAMETER SpecialCharacterToKeep
+    Specifies the special character to keep in the output
+  .EXAMPLE
+    Format-StringRemoveSpecialCharacter -String "^&*@wow*(&(*&@"
+
+    wow
+  .EXAMPLE
+    Format-StringRemoveSpecialCharacter -String "wow#@!`~)(\|?/}{-_=+*"
+
+    wow
+  .EXAMPLE
+    Format-StringRemoveSpecialCharacter -String "wow#@!`~)(\|?/}{-_=+*" -SpecialCharacterToKeep "*","_","-"
+
+    wow-_*
+  .INPUTS
+    System.String
+  .OUTPUTS
+    System.String
+  .NOTES
+    Originally written by:
+    Francois-Xavier Cat
+    @lazywinadmin
+    lazywinadmin.com
+    github.com/lazywinadmin
+  .COMPONENT
+    Tools
+  .FUNCTIONALITY
+    Reformats a string to be used; Removes special Characters in the process
+  .LINK
+    https://github.com/DEberhardt/PSstrudel/tree/main/docs/cmdlet/Format-StringRemoveSpecialCharacter.md
+  .LINK
+    https://github.com/DEberhardt/PSstrudel/tree/main/docs/about/about_Tools.md
+  .LINK
+    https://github.com/DEberhardt/PSstrudel/tree/main/docs/
+  #>
+
+  [CmdletBinding()]
+  [OutputType([String])]
+  param
+  (
+    [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'String to reformat')]
+    [ValidateNotNullOrEmpty()]
+    [Alias('Text')]
+    [System.String[]]$String,
+
+    [Alias('Keep')]
+    #[ValidateNotNullOrEmpty()]
+    [String[]]$SpecialCharacterToKeep
+  ) #param
+
+  begin {
+    Show-PSstrudelFunctionStatus -Level Live
+    #Write-Verbose -Message ("[BEGIN  ] {0}" -f $MyInvocation.MyCommand)
+
+  } #begin
+
+  process {
+    Write-Verbose -Message ("[PROCESS] {0}" -f $MyInvocation.MyCommand)
+    try {
+      if ($PSBoundParameters['SpecialCharacterToKeep']) {
+        $Regex = '[^\p{L}\p{Nd}'
+        foreach ($Character in $SpecialCharacterToKeep) {
+          if ($Character -eq '-') {
+            $Regex += '-'
+          }
+          else {
+            $Regex += [Regex]::Escape($Character)
+          }
+          #$Regex += "/$character"
+        }
+
+        $Regex += ']+'
+      } #IF($PSBoundParameters["SpecialCharacterToKeep"])
+      else { $Regex = '[^\p{L}\p{Nd}]+' }
+
+      foreach ($Str in $string) {
+        $Str -replace $regex, ''
+      }
+    }
+    catch {
+      $PSCmdlet.ThrowTerminatingError($_)
+    }
+  } #process
+
+  end {
+    #Write-Verbose -Message ("[END    ] {0}" -f $MyInvocation.MyCommand)
+  } #end
+} #Format-StringRemoveSpecialCharacter
