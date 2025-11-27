@@ -10,21 +10,21 @@ using namespace System.Linq
 #requires -Version 7
 
 <#
-  PSstrudel - Module supplementing PowerShell Module Development
-  Initially for personal use, but feel free to use/fork this and adapt it to your own needs.
+    PSstrudel - Module supplementing PowerShell Module Development
+    Initially for personal use, but feel free to use/fork this and adapt it to your own needs.
 
-  by David Eberhardt
-  PSstrudel-Module@outlook.com
-  @MightyOrmus
-  www.davideberhardt.at
-  https://github.com/DEberhardt
-  https://davideberhardt.wordpress.com/
+    by David Eberhardt
+    PSstrudel-Module@outlook.com
+    @MightyOrmus
+    www.davideberhardt.at
+    https://github.com/DEberhardt
+    https://davideberhardt.wordpress.com/
 
-  Any and all technical advice, scripts, and documentation are provided as is with no guarantee.
-  Always review any code and steps before applying to a production system to understand their full impact.
+    Any and all technical advice, scripts, and documentation are provided as is with no guarantee.
+    Always review any code and steps before applying to a production system to understand their full impact.
 
-.LINK
-  https://github.com/DEberhardt/PSstrudel/tree/master/docs
+    .LINK
+    https://github.com/DEberhardt/PSstrudel/tree/master/docs
 
 #>
 
@@ -34,13 +34,13 @@ $Public = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -Recurse -ErrorActio
 $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -Recurse -ErrorAction SilentlyContinue )
 
 #Dot source the files
-Foreach ($Function in @($Public + $Private)) {
-  Try {
-    . $Function.Fullname
-  }
-  Catch {
-    Write-Error -Message ('Failed to import function {0}: {1}' -f $Function.Fullname, $_)
-  }
+foreach ($Function in @($Public + $Private)) {
+    try {
+        . $Function.Fullname
+    }
+    catch {
+        Write-Error -Message ('Failed to import function {0}: {1}' -f $Function.Fullname, $_)
+    }
 }
 
 # Exporting Module Members (Functions)
@@ -51,24 +51,24 @@ Export-ModuleMember -Function $Public.Basename
 # Query Aliases
 $Aliases = $null
 #$Aliases = Foreach ($Function in @($Public + $Private)) {
-$Aliases = Foreach ($Function in @($Public)) {
-  if ( $Function.Fullname -match '.tests.ps1' ) { continue }
-  $Content = $AliasBlocks = $null
+$Aliases = foreach ($Function in @($Public)) {
+    if ( $Function.Fullname -match '.tests.ps1' ) { continue }
+    $Content = $AliasBlocks = $null
 
-  $Content = $Function | Get-Content
+    $Content = $Function | Get-Content
 
-  $AliasBlocks = $Content -split "`n" | Select-String 'Alias\(' -Context 1, 1
-  $AliasBlocks | ForEach-Object {
-    $Lines = $_ -split "`n"
-    if ( $Lines[0] -match 'CmdletBinding' -or $Lines[0] -match 'OutputType' -or $Lines[2] -match 'CmdletBinding' -or $Lines[2] -match 'OutputType' ) {
-      if ( ($_ -split "`n")[1] -match "Alias\('(?<content>.*)'\)" ) {
-        ($matches.content -split ',' -replace "'" -replace ' ') | ForEach-Object { if ( $_ -ne '' ) { $_ } }
-      }
+    $AliasBlocks = $Content -split "`n" | Select-String 'Alias\(' -Context 1, 1
+    $AliasBlocks | ForEach-Object {
+        $Lines = $_ -split "`n"
+        if ( $Lines[0] -match 'CmdletBinding' -or $Lines[0] -match 'OutputType' -or $Lines[2] -match 'CmdletBinding' -or $Lines[2] -match 'OutputType' ) {
+            if ( ($_ -split "`n")[1] -match "Alias\('(?<content>.*)'\)" ) {
+                ($matches.content -split ',' -replace "'" -replace ' ') | ForEach-Object { if ( $_ -ne '' ) { $_ } }
+            }
+        }
+        else {
+            continue
+        }
     }
-    else {
-      continue
-    }
-  }
 }
 
 # Manual definitions
@@ -79,7 +79,7 @@ $AliasesToExport = @($Aliases + $ManualAliases)
 Write-Verbose -Message ('Aliases to Export - Count: {0}' -f $Aliases.Count)
 Write-Verbose -Message ('Aliases to Export - List: {0}' -f ($Aliases -join ','))
 if ( $AliasesToExport ) {
-  Export-ModuleMember -Alias $AliasesToExport
+    Export-ModuleMember -Alias $AliasesToExport
 }
 #endregion
 
