@@ -1,0 +1,14 @@
+function Export-JsonFile {
+
+    param (
+        [Parameter(Mandatory)]
+        [string]$FilePath,
+
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [object]$Object
+    )
+
+    process {
+        $Object | ConvertTo-Json -Depth 100 | Format-Json | Out-File -FilePath $FilePath -Encoding utf8
+    }
+}

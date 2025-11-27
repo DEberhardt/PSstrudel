@@ -114,3 +114,23 @@ else {
   Write-Verbose -Message $Message -Verbose
 }
 #>
+
+$InformationPreference = 'Continue'
+
+
+# Loading Functions
+$Public = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -Recurse -ErrorAction SilentlyContinue )
+$Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -Recurse -ErrorAction SilentlyContinue )
+
+#Dot source the files
+foreach ($Function in @($Public + $Private)) {
+    try {
+        . $Function.Fullname
+    }
+    catch {
+        Write-Error -Message ('Failed to import function {0}: {1}' -f $Function.Basename, $_)
+    }
+}
+
+# Exporting Module Members (Functions)
+Export-ModuleMember -Function $Public.Basename
